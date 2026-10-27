@@ -8,15 +8,34 @@
 <body>
   <p>اختار تطبيق الإيميل:</p>
 
-  <!-- Apple Mail / التطبيق الافتراضي -->
-  <a href="mailto:support@example.com?subject=%D8%B7%D9%84%D8%A8%20%D8%AF%D8%B9%D9%85&body=%D8%A7%D9%84%D8%A7%D8%B3%D9%85:%0A%D8%A7%D9%84%D9%82%D8%B3%D9%85:">
-    فتح في Mail
-  </a>
+  <a id="mailBtn" href="#">فتح في Mail / التطبيق الافتراضي</a>
   <br><br>
+  <a id="outlookBtn" href="#">فتح في Outlook</a>
+  <br><br>
+  <a id="gmailBtn" href="#">فتح في Gmail</a>
 
-  <!-- Outlook -->
-  <a href="ms-outlook://compose?to=support@example.com&subject=%D8%B7%D9%84%D8%A8%20%D8%AF%D8%B9%D9%85&body=%D8%A7%D9%84%D8%A7%D8%B3%D9%85:%0A%D8%A7%D9%84%D9%82%D8%B3%D9%85:">
-    فتح في Outlook
-  </a>
+<script>
+  const to = "support@example.com";
+  const subject = encodeURIComponent("طلب دعم");
+  const body = encodeURIComponent("الاسم:\nالقسم:");
+
+  const ua = navigator.userAgent;
+  const isAndroid = /Android/i.test(ua);
+  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+  // التطبيق الافتراضي (شغال على الاتنين)
+  document.getElementById("mailBtn").href =
+    `mailto:${to}?subject=${subject}&body=${body}`;
+
+  // Outlook
+  document.getElementById("outlookBtn").href = isAndroid
+    ? `intent://compose?to=${to}&subject=${subject}&body=${body}#Intent;scheme=ms-outlook;package=com.microsoft.office.outlook;end`
+    : `ms-outlook://compose?to=${to}&subject=${subject}&body=${body}`;
+
+  // Gmail
+  document.getElementById("gmailBtn").href = isAndroid
+    ? `intent://co?to=${to}&subject=${subject}&body=${body}#Intent;scheme=googlegmail;package=com.google.android.gm;end`
+    : `googlegmail:///co?to=${to}&subject=${subject}&body=${body}`;
+</script>
 </body>
 </html>
