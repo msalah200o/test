@@ -8,7 +8,7 @@
 <body>
   <p>اختار تطبيق الإيميل:</p>
 
-  <a id="mailBtn" href="#">فتح في Mail / التطبيق الافتراضي</a>
+  <a id="mailBtn" href="#">فتح في التطبيق الافتراضي</a>
   <br><br>
   <a id="outlookBtn" href="#">فتح في Outlook</a>
   <br><br>
@@ -18,24 +18,26 @@
   const to = "support@example.com";
   const subject = encodeURIComponent("طلب دعم");
   const body = encodeURIComponent("الاسم:\nالقسم:");
+  const query = `subject=${subject}&body=${body}`;
 
-  const ua = navigator.userAgent;
-  const isAndroid = /Android/i.test(ua);
-  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+  const isAndroid = /Android/i.test(navigator.userAgent);
 
-  // التطبيق الافتراضي (شغال على الاتنين)
-  document.getElementById("mailBtn").href =
-    `mailto:${to}?subject=${subject}&body=${body}`;
+  // الافتراضي: على أندرويد هيظهر اختيار التطبيقات
+  document.getElementById("mailBtn").href = `mailto:${to}?${query}`;
 
-  // Outlook
-  document.getElementById("outlookBtn").href = isAndroid
-    ? `intent://compose?to=${to}&subject=${subject}&body=${body}#Intent;scheme=ms-outlook;package=com.microsoft.office.outlook;end`
-    : `ms-outlook://compose?to=${to}&subject=${subject}&body=${body}`;
+  if (isAndroid) {
+    // نفس mailto لكن مقفول على تطبيق معين
+    document.getElementById("outlookBtn").href =
+      `intent:${to}?${query}#Intent;scheme=mailto;action=android.intent.action.SENDTO;package=com.microsoft.office.outlook;end`;
 
-  // Gmail
-  document.getElementById("gmailBtn").href = isAndroid
-    ? `intent://co?to=${to}&subject=${subject}&body=${body}#Intent;scheme=googlegmail;package=com.google.android.gm;end`
-    : `googlegmail:///co?to=${to}&subject=${subject}&body=${body}`;
+    document.getElementById("gmailBtn").href =
+      `intent:${to}?${query}#Intent;scheme=mailto;action=android.intent.action.SENDTO;package=com.google.android.gm;end`;
+  } else {
+    document.getElementById("outlookBtn").href =
+      `ms-outlook://compose?to=${to}&${query}`;
+    document.getElementById("gmailBtn").href =
+      `googlegmail:///co?to=${to}&${query}`;
+  }
 </script>
 </body>
 </html>
